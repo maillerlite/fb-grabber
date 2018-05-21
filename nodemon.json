@@ -1,0 +1,7 @@
+{
+  "verbose": true,
+  "ignore": ["public/*","resources/*","mix-manifest.json"],
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

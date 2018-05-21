@@ -1,0 +1,82 @@
+extends layouts/default
+
+block content
+    div#page_grabber
+        div(role="alert").alert.alert-primary
+            span.font-weight-bold Info : 
+            span
+                | Aplikasi ini sek nyobak-nyobak lur, semisal ada error tulung report reng email  
+                a(href="mailto:saya@mas-fahri.com").text-white.font-weight-bold saya@mas-fahri.com
+                |  yah lur.
+                br.
+                | Source Code :  
+                a(href="https://github.com/Fahri5567/fb-grabber").text-white.font-weight-bold https://github.com/Fahri5567/fb-grabber
+        button(type="button", data-toggle="modal", data-target="#help").btn.btn-info.mb-2 Cara pakek pie cak?
+        div#grabber-box.row
+            div#grabber-input.col-sm-6
+                form(novalidate, method="POST")#form_grabber
+                    div.card
+                        div.card-header.p-2
+                            | Task: 0 | Di tunggu om
+                        div.card-body.pt-2.pb-2
+                            div.row
+                                div.col-lg-12.p-1#form_grabber_alert
+                            div.row
+                                div.col-lg-12.p-1.pb-2
+                                    textarea(rows="4", name="token", placeholder="Token", required).form-control.noresize.text-nowrap
+                            div.row
+                                div.col-lg-6.col-sm-12.p-1
+                                    div.form-group
+                                        select(name="gender")#select-gender.custom-select
+                                            option(value="all") Semua Jenis Kelamin
+                                            option(value="male") Laki-laki
+                                            option(value="female") Peremuan
+                                    div.form-group
+                                        select(name="country")#select-country.custom-select
+                                            option(value="all") Semua Negara
+                                            each country in countryList
+                                                option(value=country.code)= country.name
+                                div.col-lg-6.col-sm-12.p-1
+                                    textarea(rows="12", name="uid", placeholder="UID", required).form-control.noresize
+                        div.card-footer.p-1
+                            button(type="sumbit")#run.btn.btn-primary.btn-sm.btn-block Gondol
+            
+            div#grabber-output.col-sm-6.d-none
+                div.card
+                    div.card-header.p-2
+                        | Hasil | Total : 
+                        span#count-total 0
+                    div.card-body.p-2
+                        div.progress.mb-2
+                            div(role="progressbar", aria-valuenow="10", aria-valuemin="0", aria-valuemax="100", style="width: 10%")#process-bar.progress-bar.progress-bar-striped.progress-bar-animated
+                                span#persen 10% 
+                        textarea(rows="17", placeholder="Output").form-control.noresize.text-nowrap#output
+                    div.card-footer.p-1
+                        button#grab-btn-stop.btn.btn-danger.btn-sm.btn-block Stoppee!!
+                        div.row#grab-btn-other.d-none
+                            div.col-md-7
+                                button#grab-download.btn.btn-primary.btn-sm.btn-block Download
+                            div.col-md-5
+                                button#grab-clear.btn.btn-danger.btn-sm.btn-block Tutup
+            
+    div(tabindex="-1", role="dialog", aria-labelledby="help", aria-hidden="true").modal.fade#help
+        div(role="document").modal-dialog.modal-dialog-centered
+            div.modal-content
+                div.modal-header
+                    h5.modal-title Sedikit penjenjelasan
+                    button(type="button", data-dismiss="modal", aria-label="Close").close
+                        span(aria-hidden="true") &times;
+                div.modal-body
+                    p
+                        | Program ini dipakai jagane munduti ID konco koncone teko satu ID seng dulur lebokno.
+                        br.
+                        | Dulur iso ngelebokno lebih dari 1 ID mbi Token barang, opo fungsine token iki kok di isi akeh? tokene cuma gawe jogo-jogo sopo eru
+                        | akses token seng dulur isi iku limit, soale token iku iso limit dulur.. Jadi lek token sebelume limit bisa next ke token baru seng dulur isi.
+                        br
+                        | Tapi nak iso akses token makek dari fb lain / ojo podo 1 akun fb, soale seng limit iku penggunaan token per akun, monggo  
+                        a(href="https://developers.facebook.com/docs/graph-api/advanced/rate-limiting#account-level-rate-limiting") diwaca dulu lur 
+                        | :D
+                    p
+                        | Nak masih binggung coba takon kanca-kancane seng faham.
+                div.modal-footer
+                    button(type="button", data-dismiss="modal").btn.btn-danger.btn-sm Tutup
