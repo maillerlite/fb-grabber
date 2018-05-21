@@ -5,3 +5,4 @@ mix-manifest.json
 .npm
 *.log
 node_modules/
+public/
