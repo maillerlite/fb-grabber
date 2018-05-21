@@ -7,7 +7,7 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "run": "npm run production && bin/www",
+    "start": "npm run production && node ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1",
     "nodemon": "node_modules/.bin/nodemon --inspect bin/www 3000 --config nodemon.json",
     "dev": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
