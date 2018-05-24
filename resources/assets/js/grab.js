@@ -96,6 +96,12 @@ class Grab extends listener {
     
     bluebird.each(this._uids, (uid, current, count) => {
       
+      const errorCount = {
+        request: 0,
+        token: 0,
+        uid: 0
+      };
+      
       let req = () => {
         
         if (true === this._stopNow) {
@@ -142,6 +148,7 @@ class Grab extends listener {
                 this._tokenSkip();
                 console.log('token has change to ' + this._token);
               }
+              
               return req();
             }
             
@@ -150,36 +157,31 @@ class Grab extends listener {
           this.emit('grab', null, response, (current + 1), count);
           return response;
         }).catch(error => { // Hanya catch koneksi internet
-          if (error.status == 0) { // permintaan tidak diinisialisasi
+          if (error.status === 0) { // permintaan tidak diinisialisasi
             console.log('Request not initialized');
-            return new Promise(resolve => {
-              setTimeout(() => { // wait a 1 seconts to request again
-                console.log('Retry request start UID : ' + uid);
-                return req();
-              }, 1000);
-            });
           }
           else if (error.status === 'timeout') {
             console.log('Request timeou');
-            return new Promise(resolve => {
-              setTimeout(() => { // wait a 1 seconts to request again
-                console.log('Retry request start UID : ' + uid);
-                return req();
-              }, 1000);
-            });
           }
           else if (error.status === 'parsererror') {
             console.log('HTTP error occurs');
-            return new Promise(resolve => {
-              setTimeout(() => { // wait a 1 seconts to request again
-                console.log('Retry request start UID : ' + uid);
-                return req();
-              }, 1000);
-            });
           }
-          else {
+          
+          if (errorCount.request >= 10) {
+            console.log('Connection prolem width 10x request');
             return bluebird.reject(error);
           }
+          
+          if (error.status !== 0) {
+            errorCount.request++;
+          }
+          
+          return new Promise(resolve => {
+            setTimeout(() => { // wait a 1 seconts to request again
+              console.log('Retry request start UID : ' + uid);
+              return resolve(req());
+            }, 5000);
+          });
         });
       };
       
