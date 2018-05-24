@@ -132,8 +132,8 @@ class Boxs extends listener {
       event.preventDefault();
       event.stopPropagation();
       
-      const token = data.token = data.token.split(/\n/);
-      const uid = data.uid = data.uid.split(/\n/);
+      const token = data.token = jQuery.trim(data.token).split(/\n/);
+      const uid = data.uid = jQuery.trim(data.uid).split(/\n/);
       
       if (form.length && form[0].checkValidity() === true) {
         
