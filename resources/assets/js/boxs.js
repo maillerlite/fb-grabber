@@ -80,6 +80,7 @@ class Boxs extends listener {
     box.grab.on('start', (uid, token, filter) => {
       
       this.emit('resetOutput', box);
+      box.element.find('#grab-count-total').text(uid.length);
       
     });
     

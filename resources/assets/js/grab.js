@@ -96,11 +96,7 @@ class Grab extends listener {
     
     bluebird.each(this._uids, (uid, current, count) => {
       
-      const errorCount = {
-        request: 0,
-        token: 0,
-        uid: 0
-      };
+      const errorRequestCount = 0;
       
       let req = () => {
         
@@ -167,13 +163,13 @@ class Grab extends listener {
             console.log('HTTP error occurs');
           }
           
-          if (errorCount.request >= 10) {
-            console.log('Connection prolem width 10x request');
-            return bluebird.reject(error);
+          if (errorRequestCount >= 10) {
+            console.log('Connection prolem width 10x request, SKIP this');
+            return bluebird.resolve([]);
           }
           
           if (error.status !== 0) {
-            errorCount.request++;
+            errorRequestCount++;
           }
           
           return new Promise(resolve => {
