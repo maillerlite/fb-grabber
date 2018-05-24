@@ -1,0 +1,82 @@
+extends layouts/default
+
+block content
+    div#page-grabber
+        div(role="alert").alert.alert-primary
+            button(type="button", data-dismiss="alert", aria-label="Close").close
+                span(aria-hidden="true") &times;
+            strong Info : 
+            p.mb-0
+                | Aplikasi ini sek nyobak-nyobak lur, semisal ada error tulung report masalah reng 
+                a(href=pjson.bugs.url, target="_blank").text-white.font-weight-bold= pjson.bugs.url
+                |  yah lur.
+        button(type="button", data-toggle="modal", data-target="#help").btn.btn-info.mb-3 Cara pakek pie cak?
+        div#grab-boxs.row
+            
+    
+    div.col-sm-6#grab-box-template.d-none
+        form(novalidate, method="POST")#grab-form
+            div#form-input.card
+                div.card-header.p-2
+                    | Task: 
+                    strong#task 0
+                div.card-body.pt-3.pb-0.pl-2.pr-2
+                    div.form-group
+                        textarea(rows="4", name="token", placeholder="Token", required).form-control.noresize.text-nowrap
+                    div.form-group
+                        select(name="gender")#select-gender.custom-select
+                            option(value="all") Semua Jenis Kelamin
+                            option(value="male") Laki-laki
+                            option(value="female") Peremuan
+                    div.form-group
+                        select(name="country")#select-country.custom-select
+                            option(value="all") Semua Negara
+                            each country in countryList
+                                option(value=country.code)= country.name
+                    div.form-group
+                        textarea(rows="12", name="uid", placeholder="UID", required).form-control.noresize
+                div.card-footer.p-2
+                    button(type="sumbit")#run.btn.btn-primary.btn-sm.btn-block Gondol
+            
+        div#form-output.card.d-none
+                div.card-header.p-2
+                    | Proses: 
+                    strong#grab-count-process 0
+                    | /
+                    strong#grab-count-total 0
+                    |  | Grabbed UID: 
+                    strong#grab-count-grabbed 0
+                div.card-body.p-2
+                    div.progress.mb-2
+                        div(role="progressbar", aria-valuenow="23", aria-valuemin="0", aria-valuemax="100", style="width: 23%")#process-bar.progress-bar.progress-bar-striped.progress-bar-animated
+                            span loading...
+                    textarea(rows="21", placeholder="Output").form-control.noresize.text-nowrap#output
+                div.card-footer.p-2
+                    button#grab-btn-stop.btn.btn-danger.btn-sm.btn-block Stoppee!!
+                    div.row#grab-btn-other.d-none
+                        div.col-md-7
+                            button#grab-btn-download.btn.btn-primary.btn-sm.btn-block Download
+                        div.col-md-5
+                            button#grab-btn-reset.btn.btn-danger.btn-sm.btn-block Tutup
+    
+    div(tabindex="-1", role="dialog", aria-labelledby="help", aria-hidden="true").modal.fade#help
+        div(role="document").modal-dialog.modal-dialog-centered
+            div.modal-content
+                div.modal-header
+                    h5.modal-title Sedikit penjenjelasan
+                    button(type="button", data-dismiss="modal", aria-label="Close").close
+                        span(aria-hidden="true") &times;
+                div.modal-body
+                    p
+                        | Program ini dipakai jagane munduti ID konco koncone teko satu ID seng dulur lebokno.
+                        br.
+                        | Dulur iso ngelebokno lebih dari 1 ID mbi Token barang, opo fungsine token iki kok di isi akeh? tokene cuma gawe jogo-jogo sopo eru
+                        | akses token seng dulur isi iku limit, soale token iku iso limit dulur.. Jadi lek token sebelume limit bisa next ke token baru seng dulur isi.
+                        br
+                        | Tapi nak iso akses token makek dari fb lain / ojo podo 1 akun fb, soale seng limit iku penggunaan token per akun, monggo  
+                        a(href="https://developers.facebook.com/docs/graph-api/advanced/rate-limiting#account-level-rate-limiting") diwaca dulu lur 
+                        | :D
+                    p
+                        | Nak masih binggung coba takon kanca-kancane seng faham.
+                div.modal-footer
+                    button(type="button", data-dismiss="modal").btn.btn-danger.btn-sm Tutup

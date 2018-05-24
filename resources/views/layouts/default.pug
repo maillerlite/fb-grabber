@@ -1,0 +1,36 @@
+doctype html
+html('en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    if pageTitle
+      title #{siteTitle} | #{pageTitle}
+    else
+      title= siteTitle
+    link(rel='stylesheet', href='/dist/css/app.css')
+  body(style="overflow: hidden")
+    div.header-wrapper
+      div.container.pb-1
+        h1.mb-0.text-uppercase.font-weight-bold
+          | #{siteTitle} &nbsp
+          span.badge.badge-secondary.text-danger.text-lowercase v#{pjson.version.charAt(0)}
+        span.text-muted #{siteSlogan}
+        hr.mb-0
+    div.loading
+      div.fix-size
+        div.sk-folding-cube
+          div.sk-cube1.sk-cube
+          div.sk-cube2.sk-cube
+          div.sk-cube4.sk-cube
+          div.sk-cube3.sk-cube
+    div(style="display: none;").body-wrapper
+      div.container
+        if pageTitle
+            div.page-title
+                h3= pageTitle
+        block content
+    div.footer-wrapper
+      div.container
+        hr.
+        p System version #{pjson.version}
+    script(src='/dist/js/app.js')

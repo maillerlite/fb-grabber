@@ -1,0 +1,53 @@
+{
+  "name": "fb-grabber",
+  "version": "1.0.1",
+  "description": "Facebook Grabber",
+  "private": true,
+  "author": "Mas Fahri <fahri372a@gmail.com> (http://mas-fahri.com/)",
+  "license": "MIT",
+  "main": "server.js",
+  "homepage": "https://github.com/Fahri5567/fb-grabber",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fahri5567/fb-grabber.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Fahri5567/fb-grabber/issues"
+  },
+  "engines": {
+    "node": ">=8.11.2"
+  },
+  "scripts": {
+    "start": "npm run production && node -r dotenv/config ./bin/www",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "nodemon": "node_modules/.bin/nodemon --inspect --exec 'node -r dotenv/config' ./bin/www --config nodemon.json",
+    "dev": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch-poll": "npm run watch -- --watch-poll",
+    "prod": "npm run production",
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "helmet": "^3.12.1",
+    "morgan": "^1.9.0",
+    "pug": "^2.0.3",
+    "request": "^2.86.0",
+    "request-promise": "^4.2.2",
+    "serve-favicon": "^2.5.0",
+    "stack-trace": "0.0.10"
+  },
+  "devDependencies": {
+    "bootstrap": "^4.0.0",
+    "cross-env": "^5.1.4",
+    "jquery": "^3.3.1",
+    "laravel-mix": "^2.1.11",
+    "lodash": "^4.17.5",
+    "nodemon": "^1.17.2",
+    "popper.js": "^1.14.1"
+  }
+}
