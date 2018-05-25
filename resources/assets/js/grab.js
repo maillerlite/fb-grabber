@@ -145,10 +145,11 @@ class Grab extends listener {
                 console.log('token has change to ' + this._token);
               }
               
+              this.emit('grab', error, [], (current + 1), count);
+              
               return req();
             }
             
-            this.emit('grab', error, [], (current + 1), count);
           }
           this.emit('grab', null, response, (current + 1), count);
           return response;
