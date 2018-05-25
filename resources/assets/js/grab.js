@@ -96,7 +96,7 @@ class Grab extends listener {
     
     bluebird.each(this._uids, (uid, current, count) => {
       
-      const errorRequestCount = 0;
+      let errorRequestCount = 0;
       
       let req = () => {
         
