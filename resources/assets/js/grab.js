@@ -163,8 +163,8 @@ class Grab extends listener {
             console.log('HTTP error occurs');
           }
           
-          if (errorRequestCount >= 10) {
-            console.log('Connection prolem width 10x request, SKIP this');
+          if (errorRequestCount >= 5) {
+            console.log('Connection prolem width 5x request, SKIP this');
             return bluebird.resolve([]);
           }
           
@@ -176,7 +176,7 @@ class Grab extends listener {
             setTimeout(() => { // wait a 1 seconts to request again
               console.log('Retry request start UID : ' + uid);
               return resolve(req());
-            }, 5000);
+            }, 3000);
           });
         });
       };
