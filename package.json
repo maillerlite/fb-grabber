@@ -18,7 +18,8 @@
     "node": ">=8.11.2"
   },
   "scripts": {
-    "start": "npm run production && node -r dotenv/config ./bin/www",
+    "start": "node -r dotenv/config ./bin/www",
+    "prestart": "npm run production",
     "test": "echo \"Error: no test specified\" && exit 1",
     "nodemon": "node_modules/.bin/nodemon --inspect --exec 'node -r dotenv/config' ./bin/www --config nodemon.json",
     "dev": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
