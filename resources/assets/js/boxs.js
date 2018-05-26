@@ -94,7 +94,10 @@ class Boxs extends listener {
         
       boxFormOutput.find('#grab-count-process').text(current);
       boxFormOutput.find('#grab-count-total').text(processed);
-      grabbed.text((parseInt(grabbed.text(), 10) + response.length));
+      
+      if (response.length) {
+        grabbed.text((parseInt(grabbed.text(), 10) + response.length));
+      }
       
       elementProcess.attr('aria-valuenow', percent);
       elementProcess.width(percent + '%');
@@ -154,6 +157,18 @@ class Boxs extends listener {
     
     btnReset.on('click', () => {
       this.emit('clickReset', box);
+    });
+    
+    box.element.find('#output').focus(function() {
+      const $this = box.element.find('#output');
+      $this.select();
+    
+      // Work around Chrome's little problem
+      $this.mouseup(function() {
+          // Prevent further mouseup intervention
+          $this.unbind("mouseup");
+          return false;
+      });
     });
     
     btnDownload.on('click', () => {

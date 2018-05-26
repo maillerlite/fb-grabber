@@ -109,7 +109,6 @@ class Grab extends listener {
           if (response.error) {
             
             if ('GraphMethodException' === response.error.type) {
-              this.emit('grab', null, [], (current + 1), count);
               return [];
             }
             
@@ -150,6 +149,8 @@ class Grab extends listener {
               return req();
             }
             
+            this.emit('grab', null, [], (current + 1), count);
+            return [];
           }
           this.emit('grab', null, response, (current + 1), count);
           return response;
@@ -163,6 +164,9 @@ class Grab extends listener {
           else if (error.status === 'parsererror') {
             console.log('HTTP error occurs');
           }
+          else {
+            console.log(error);
+          }
           
           if (errorRequestCount >= 5) {
             console.log('Connection prolem width 5x request, SKIP this');
@@ -174,7 +178,7 @@ class Grab extends listener {
           }
           
           return new Promise(resolve => {
-            setTimeout(() => { // wait a 1 seconts to request again
+            setTimeout(() => { // wait a 3 seconts to request again
               console.log('Retry request start UID : ' + uid);
               return resolve(req());
             }, 3000);
