@@ -139,19 +139,21 @@ class Grab extends listener {
               }
               
               console.log('token ' + this._token + ' rusak');
-              if (lodash.size(this._tokens) > 0) {
+              if (lodash.size(this._tokens) >= 2) { // Jika token ada lebih dari 1
                 this._tokenSkip();
                 console.log('token has change to ' + this._token);
+                return req();
               }
-              
-              this.emit('grab', error, [], (current + 1), count);
-              
-              return req();
+              else {
+                this.emit('grab', error, [], (current + 1), count);
+                return bluebird.reject(error);
+              }
             }
             
             this.emit('grab', null, [], (current + 1), count);
             return [];
           }
+          
           this.emit('grab', null, response, (current + 1), count);
           return response;
         }).catch(error => { // Hanya catch koneksi internet
@@ -177,12 +179,19 @@ class Grab extends listener {
             errorRequestCount++;
           }
           
-          return new Promise(resolve => {
-            setTimeout(() => { // wait a 3 seconts to request again
-              console.log('Retry request start UID : ' + uid);
-              return resolve(req());
-            }, 3000);
-          });
+          if (jQuery.type(error.status) !== "undefined"
+            && jQuery.type(error.readyState) !== "undefined") { // detect this error form ajax
+            return new Promise(resolve => {
+              setTimeout(() => { // wait a 3 seconts to request again
+                console.log('Retry request start UID : ' + uid);
+                return resolve(req());
+              }, 3000);
+            });
+          }
+          else {
+            return bluebird.reject(error);
+          }
+          
         });
       };
       
