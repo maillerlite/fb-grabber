@@ -1,33 +1,23 @@
 const express = require('express'),
   router = express.Router(),
-  grabber = require('../app/grabber'),
+  // grabber = require('../app/grabber'),
+  Grab = require('../app/grab'),
   stackTrace = require('stack-trace');
 
-function props(obj) {
-  var p = [];
-  for (; obj != null; obj = Object.getPrototypeOf(obj)) {
-    var op = Object.getOwnPropertyNames(obj);
-    for (var i=0; i<op.length; i++) {
-      if (p.indexOf(op[i]) == -1) {
-        p.push(op[i]);
-      }
-    }
-  }
-  return p;
-}
+router.get('/grab/user', (req, res, next) => {
 
-router.get('/grab', (req, res, next) => {
-
-  const options = {};
+  const filter = {};
 
   if (req.query.country) {
-    options.country = req.query.country;
+    filter.country = req.query.country;
   }
   if (req.query.gender) {
-    options.gender = req.query.gender;
+    filter.gender = req.query.gender;
   }
   
-  grabber(req.query.uid, req.query.token, options, (error, response) => {
+  const grab = new Grab(req.query.token);
+  
+  grab.user(req.query.uid, filter, (error, response) => {
     if (error) {
       const errObj = {
         message: error.message,
@@ -43,6 +33,35 @@ router.get('/grab', (req, res, next) => {
     res.send(response);
   });
 
+});
+
+router.get('/grab/group', (req, res, next) => {
+  const filter = {};
+
+  if (req.query.country) {
+    filter.country = req.query.country;
+  }
+  if (req.query.gender) {
+    filter.gender = req.query.gender;
+  }
+  
+  const grab = new Grab(req.query.token);
+  
+  grab.group(req.query.uid, filter, (error, response) => {
+    if (error) {
+      const errObj = {
+        message: error.message,
+        type: error.type,
+        code: error.code
+      };
+      if ('development' === process.env.NODE_ENV) {
+        errObj.stack = stackTrace.parse(error);
+      }
+      res.send({error: errObj});
+      return;
+    }
+    res.send(response);
+  });
 });
 
 // -----------------------------------------------------
@@ -63,7 +82,8 @@ router.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.json({
     message: err.message,
-    stack: err.stack
+    code: err.code,
+    stack: stackTrace.parse(err)
   });
 });
 

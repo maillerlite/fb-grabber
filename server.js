@@ -1,65 +1,88 @@
-const express = require('express'),
-  path = require('path'),
-  favicon = require('serve-favicon'),
-  morgan = require('morgan'),
-  helmet = require('helmet'),
-  pjson = require('./package.json'),
-  cookieParser = require('cookie-parser'),
-  bodyParser = require('body-parser'),
-  app = express();
+/**
+ * Module dependencies.
+ */
 
-// view engine setup
-app.set('views', path.join(__dirname, 'resources/views'));
-app.set('view engine', 'pug');
+const app = require('./index'),
+  debug = require('debug')('fb-grabber:server'),
+  http = require('http');
 
-app.set('trust proxy', 1);
-app.disable('x-powered-by');
+/**
+ * Get port from environment and store in Express.
+ */
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+const port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
 
-if ('development' === process.env.NODE_ENV) {
-  app.use(morgan('dev'));
+/**
+ * Create HTTP server.
+ */
+
+const server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
 }
-else {
-  app.use(morgan('combined', {
-    skip: function (req, res) { return res.statusCode < 400 }
-  }));
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
 }
 
-app.use(helmet());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+/**
+ * Event listener for HTTP server "listening" event.
+ */
 
-app.use((req, res, next) => {
-  res.locals.httpsRedirect = process.env.httpsRedirect && process.env.httpsRedirect.toLowerCase() === 'true' ? true : false; 
-  res.locals.siteName = process.env.siteName;
-  res.locals.siteTitle = process.env.siteTitle;
-  res.locals.siteSlogan = process.env.siteSlogan;
-  res.locals.pjson = pjson;
-  
-  next();
-});
-
-require('./router')(app);
-
-// catch 404 and forward to error handler
-app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handler
-app.use((err, req, res, next) => {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 500);
-  res.render('error', {
-    title: err.message
-  });
-});
-
-module.exports = app;
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}

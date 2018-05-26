@@ -3,6 +3,10 @@ const jQuery = require('jquery'),
   bluebird = require('bluebird'),
   listener = require('./listener');
 
+bluebird.config({
+  cancellation :true
+});
+
 class Grab extends listener {
   
   constructor() {
@@ -10,11 +14,9 @@ class Grab extends listener {
     
     this.count = {
       process: 0, // number total uid yang akan di proses
-      current: 0 // number uid yang sedang di proses 
+      current: 0 // number uid yang sedang di proses
     };
     
-    
-    this._stopNow = false;
     this._token = null; // token aktif yang akan digunakan
     this._tokenRisk = []; // token yang bermasalah ditampung disini
     
@@ -23,11 +25,15 @@ class Grab extends listener {
     this._filter = {}; // object filter
   }
   
-  request(uid) {
+  request(uid, type) {
     
     uid = lodash.trim(uid).replace(/(\r)/, '');
   
-    const url = '/api/grab',
+    if (!type) {
+      type = 'user';
+    }
+  
+    const url = '/api/grab/' + type,
       ajaxData = {
         'uid': uid,
         'token': this._token
@@ -50,15 +56,22 @@ class Grab extends listener {
       }
     }
     
-    const response = jQuery.ajax({
-      url: url,
-      data: ajaxData,
-      cache: false,
-      method: 'GET',
-      dataType: 'json'
+    return new bluebird((resolve, reject, onCancel) => {
+      const xhr = jQuery.ajax({
+        url: url,
+        data: ajaxData,
+        cache: false,
+        success: resolve,
+        error: reject,
+        method: 'GET',
+        dataType: 'json'
+      });
+      
+      onCancel(() => {
+        xhr.abort();
+      });
+      
     });
-    
-    return bluebird.resolve(response);
   }
   
   _tokenSkip() {
@@ -90,19 +103,13 @@ class Grab extends listener {
       return lodash.size(token) > 3;
     });
     this._filter = lodash.isObject(filter) ? filter : {};
-    this._stopNow = false;
     this._tokenStart();
     this.emit('start', this._uids, this._tokens, this._filter);
-    
-    bluebird.each(this._uids, (uid, current, count) => {
+    this._process = bluebird.each(this._uids, (uid, current, count) => {
       
       let errorRequestCount = 0;
       
       let req = () => {
-        
-        if (true === this._stopNow) {
-          return [];
-        }
         
         return this.request(uid).then(response => {
           // catch response
@@ -181,11 +188,14 @@ class Grab extends listener {
           
           if (jQuery.type(error.status) !== "undefined"
             && jQuery.type(error.readyState) !== "undefined") { // detect this error form ajax
-            return new Promise(resolve => {
-              setTimeout(() => { // wait a 3 seconts to request again
-                console.log('Retry request start UID : ' + uid);
-                return resolve(req());
-              }, 3000);
+            
+            return new bluebird(resolve => {
+              if (!this._process.isCancelled()) { // don't run if process loop is canceled
+                setTimeout(() => { // wait a 3 seconts to request again
+                  console.log('Retry request start UID : ' + uid);
+                  return resolve(req());
+                }, 3000);
+              }
             });
           }
           else {
@@ -197,16 +207,17 @@ class Grab extends listener {
       
       return req();
       
+    }).catch((error) => { // No catch handle
+      return error;
     }).finally(() => {
-      if (false === this._stopNow) {
-        this.stop();
-      }
       this.emit('finish');
     });
   }
   
   stop() {
-    this._stopNow = true;
+    if (this._process) {
+      this._process.cancel();
+    }
     this.emit('stop');
   }
   

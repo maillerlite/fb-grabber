@@ -1,6 +1,3 @@
-const jQuery = require('jquery'),
-  bluebird = require('bluebird');
-
 function fromToObject(el) {
   let data = {};
   const dataArray = el.serializeArray();
@@ -11,46 +8,28 @@ function fromToObject(el) {
   return data;
 }
 
-function grabber(uid, options = {}) {
+function createDownloadText(element, unique, text, filename) {
+  const a = document.createElement("a"),
+    url = window.URL.createObjectURL(new window.Blob(text, {
+      type: "text/plain"
+    }));
   
-  uid = uid ? uid.replace(/(\r)/, '') : '';
+  element.append(a);
   
-  if (uid.length < 3) { // Jika dibawah panjang 3 karakter langsung ae skip
-    return bluebird.resolve([]);
+  a.setAttribute('id', 'dnl-' + unique);
+  a.setAttribute('style', 'display: none');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  
+  window.URL.revokeObjectURL(url);
+  
+  if (element.find('a#dnl-' + unique).length > 0) {
+    element.find('a#dnl-' + unique).remove();
   }
   
-  const url = '/api/grab',
-    ajaxData = {
-      uid: uid
-    };
-  
-  if (options.token) {
-    ajaxData.token = options.token.replace(/(\r)/, '');
-  }
-  if (options.country && options.country !== 'all') {
-    ajaxData.country = options.country;
-  }
-  if (options.gender && options.gender !== 'all') {
-    ajaxData.gender = options.gender;
-  }
-  
-  const request = jQuery.ajax({
-    url: url,
-    data: ajaxData,
-    cache: false,
-    method: 'GET',
-    dataType: 'json',
-  });
-  
-  return bluebird.resolve(request);
-}
-
-function downloadText(text) {
-  return window.URL.createObjectURL(new window.Blob(text, {
-    type: "text/plain"
-  }));
+  return a;
 }
 
 module.exports.fromToObject = fromToObject;
-module.exports.grabber = grabber;
-module.exports.downloadText = downloadText;
+module.exports.createDownloadText = createDownloadText;

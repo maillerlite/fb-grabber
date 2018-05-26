@@ -1,5 +1,6 @@
 const jQuery = require('jquery'),
-  lodash = require('lodash');
+  lodash = require('lodash'),
+  Boxs = require('./boxs');
 
 try {
   window._ = lodash;
@@ -8,7 +9,6 @@ try {
 } catch (e) {}
 
 jQuery(() => {
-  
   jQuery(document).ready(() => {
     jQuery('.loading').hide(0, () => {
       jQuery('body').removeAttr('style');
@@ -17,6 +17,10 @@ jQuery(() => {
   });
   
   if (jQuery('#page-grabber').length) {
-    require('./grabber');
+    const boxsBaseTemplate = jQuery('#grab-box-template.d-none'),
+      boxs = new Boxs(boxsBaseTemplate);
+    
+    boxs.add();
+    boxs.add();
   }
 });

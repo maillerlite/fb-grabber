@@ -1,6 +1,6 @@
-const router = (app, io) => {
+const router = app => {
   
-  //Aeb router
+  //Web router
   const web = require('./routes/web');
   app.use('/', web);
   
