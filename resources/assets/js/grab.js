@@ -62,7 +62,12 @@ class Grab extends listener {
         data: ajaxData,
         cache: false,
         success: resolve,
-        error: reject,
+        error: (jqXHR, textStatus, errorThrown) => {
+          const error = new Error(errorThrown);
+          error.readyState = jqXHR.readyState;
+          error.status = jqXHR.status;
+          reject(error);
+        },
         method: 'GET',
         dataType: 'json'
       });
@@ -207,8 +212,8 @@ class Grab extends listener {
       
       return req();
       
-    }).catch((error) => { // No catch handle
-      return error;
+    }).catch(error => {
+      // No catch handle
     }).finally(() => {
       this.emit('finish');
     });

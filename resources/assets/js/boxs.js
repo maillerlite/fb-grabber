@@ -18,21 +18,51 @@ class Boxs extends listener {
     this.baseTemplate = baseTemplate.clone();
     this.baseTemplate.removeClass('d-none');
     this.baseTemplate.attr('id', 'grab-box');
+    
+    this.on('clickStop', box => {
+      const btnStop = box.element.find('#grab-btn-stop'),
+        btnOther = box.element.find('#grab-btn-other');
+      
+      box.grab.stop();
+      btnStop.addClass('d-none');
+      btnOther.removeClass('d-none');
+    });
+    
+    this.on('resetOutput', box => {
+      const boxFormOutput = box.element.find('#form-output'),
+        elementProcess = boxFormOutput.find('#process-bar'),
+        btnStop = box.element.find('#grab-btn-stop'),
+        btnOther = box.element.find('#grab-btn-other'),
+        output = boxFormOutput.find('#output'),
+        grabbed = boxFormOutput.find('#grab-count-grabbed');
+      
+      elementProcess.attr('aria-valuenow', 23);
+      elementProcess.width('23%');
+      elementProcess.text('loading...');
+      
+      btnOther.addClass('d-none');
+      btnStop.removeClass('d-none');
+      
+      output.text('');
+      
+      boxFormOutput.find('#grab-count-process').text(0);
+      boxFormOutput.find('#grab-count-total').text(0);
+      grabbed.text(0);
+    });
   }
   
   _registerEvent(box) {
-    const form = box.element.find('#grab-form'),
-      btnStop = box.element.find('#grab-btn-stop'),
-      btnReset = box.element.find('#grab-btn-reset'),
-      btnDownload = box.element.find('#grab-btn-download'),
-      btnOther = box.element.find('#grab-btn-other'),
-      
-      boxFormInput = box.element.find('#form-input'),
-      boxFormOutput = box.element.find('#form-output'),
-      
-      output = boxFormOutput.find('#output'),
-      elementProcess = boxFormOutput.find('#process-bar'),
-      grabbed = boxFormOutput.find('#grab-count-grabbed');
+      const form = box.element.find('#grab-form'),
+        btnStop = box.element.find('#grab-btn-stop'),
+        btnReset = box.element.find('#grab-btn-reset'),
+        btnDownload = box.element.find('#grab-btn-download'),
+        
+        boxFormInput = box.element.find('#form-input'),
+        boxFormOutput = box.element.find('#form-output'),
+        
+        output = boxFormOutput.find('#output'),
+        elementProcess = boxFormOutput.find('#process-bar'),
+        grabbed = boxFormOutput.find('#grab-count-grabbed');
     
     box.grab.on('start', (uid, token, filter) => {
       this.emit('resetOutput', box);
@@ -95,34 +125,13 @@ class Boxs extends listener {
     });
     
     btnStop.on('click', () => {
-      this.emit('clickStop');
+      this.emit('clickStop', box);
     });
     
     btnReset.on('click', () => {
       this.emit('resetOutput', box);
       boxFormInput.removeClass('d-none');
       boxFormOutput.addClass('d-none');
-    });
-    
-    this.on('clickStop', () => {
-      box.grab.stop();
-      btnStop.addClass('d-none');
-      btnOther.removeClass('d-none');
-    });
-    
-    this.on('resetOutput', box => {
-      elementProcess.attr('aria-valuenow', 23);
-      elementProcess.width('23%');
-      elementProcess.text('loading...');
-      
-      btnOther.addClass('d-none');
-      btnStop.removeClass('d-none');
-      
-      output.text('');
-      
-      boxFormOutput.find('#grab-count-process').text(0);
-      boxFormOutput.find('#grab-count-total').text(0);
-      grabbed.text(0);
     });
     
     box.element.find('#output').focus(() => {
