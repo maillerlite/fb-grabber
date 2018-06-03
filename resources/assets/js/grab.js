@@ -12,6 +12,11 @@ class Grab extends listener {
   constructor() {
     super();
     
+    this._dataEmpthy = {
+      count: 0,
+      data: ''
+    };
+    
     this.count = {
       process: 0, // number total uid yang akan di proses
       current: 0 // number uid yang sedang di proses
@@ -27,7 +32,7 @@ class Grab extends listener {
   
   request(uid, type) {
     
-    uid = lodash.trim(uid).replace(/(\r)/, '');
+    uid = jQuery.trim(uid).replace(/(\r)/, '');
   
     if (!type) {
       type = 'user';
@@ -39,15 +44,15 @@ class Grab extends listener {
         'token': this._token
       };
     
-    if (lodash.size(uid) < 1) { // Jika dibawah panjang 3 karakter langsung ae skip
-      return bluebird.resolve([]);
+    if (uid.length < 1) { // Jika dibawah panjang 3 karakter langsung ae skip
+      return bluebird.resolve(this._dataEmpthy);
     }
     
-    if (lodash.size(this._token) < 1) { // Jika dibawah panjang 3 karakter langsung ae skip
-      return bluebird.resolve([]);
+    if (this._token.length < 1) { // Jika dibawah panjang 3 karakter langsung ae skip
+      return bluebird.resolve(this._dataEmpthy);
     }
     
-    if (true === lodash.isObject(this._filter)) {
+    if (true === jQuery.isPlainObject(this._filter)) {
       if (this._filter.country && this._filter.country !== 'all') {
         ajaxData.country = this._filter.country;
       }
@@ -92,7 +97,7 @@ class Grab extends listener {
     }
     else {
       for (let i = 0; i < this._tokens.length; i++) {
-        if (false === lodash.includes(this._tokenRisk, this._tokens[i])) {
+        if (false === this._tokenRisk.includes(this._tokens[i])) {
           this._token = this._tokens[i];
           break;
         }
@@ -121,7 +126,7 @@ class Grab extends listener {
           if (response.error) {
             
             if ('GraphMethodException' === response.error.type) {
-              return [];
+              return this._dataEmpthy;
             }
             
             const error = new Error();
@@ -146,7 +151,7 @@ class Grab extends listener {
             if (codeErrorToken.includes(error.code)) {
               
               if (this._tokenRisk.length >= this._tokens.length) {
-                this.emit('grab', error, [], (current + 1), count);
+                this.emit('grab', error, this._dataEmpthy, (current + 1), count);
                 return bluebird.reject(error);
               }
               
@@ -157,13 +162,13 @@ class Grab extends listener {
                 return req();
               }
               else {
-                this.emit('grab', error, [], (current + 1), count);
+                this.emit('grab', error, this._dataEmpthy, (current + 1), count);
                 return bluebird.reject(error);
               }
             }
             
-            this.emit('grab', null, [], (current + 1), count);
-            return [];
+            this.emit('grab', null, this._dataEmpthy, (current + 1), count);
+            return this._dataEmpthy;
           }
           
           this.emit('grab', null, response, (current + 1), count);
@@ -184,7 +189,7 @@ class Grab extends listener {
           
           if (errorRequestCount >= 5) {
             console.log('Connection prolem width 5x request, SKIP this');
-            return bluebird.resolve([]);
+            return bluebird.resolve(this._dataEmpthy);
           }
           
           if (error.status !== 0) {

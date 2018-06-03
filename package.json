@@ -19,7 +19,6 @@
   },
   "scripts": {
     "start": "node -r dotenv/config server.js",
-    "prestart": "npm run production",
     "test": "echo \"Error: no test specified\" && exit 1",
     "nodemon": "node_modules/.bin/nodemon --inspect --exec 'node -r dotenv/config' server.js --config nodemon.json",
     "dev": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
@@ -32,12 +31,12 @@
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
+    "core-fb-grabber": "^1.0.0",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "helmet": "^3.12.1",
     "morgan": "^1.9.0",
     "pug": "^2.0.3",
-    "request": "^2.86.0",
     "serve-favicon": "^2.5.0",
     "stack-trace": "0.0.10"
   },

@@ -75,8 +75,8 @@ class Boxs extends listener {
       boxFormOutput.find('#grab-count-process').text(current);
       boxFormOutput.find('#grab-count-total').text(processed);
       
-      if (response.length) {
-        grabbed.text((parseInt(grabbed.text(), 10) + response.length));
+      if (response.count > 0) {
+        grabbed.text((parseInt(grabbed.text(), 10) + response.count));
       }
       
       elementProcess.attr('aria-valuenow', percent);
@@ -84,7 +84,7 @@ class Boxs extends listener {
       elementProcess.text(parseInt(percent, 10) + '%');
       
       if (!error) {
-        output.append(response.length ? response.join("\n") + "\n" : '');
+        output.append(response.count > 0 ? response.data + "\n" : '');
       }
       else {
         let msg = '';
